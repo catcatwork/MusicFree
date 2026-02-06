@@ -108,11 +108,27 @@ interface IBottomIconProps {
 function BottomIcon(props: IBottomIconProps) {
     const { icon, title, onPress, color = "text" } = props;
     const colors = useColors();
+    const { t } = useI18N();
+    
+    // Map title to accessibility label
+    let accessibilityLabel = title;
+    if (title === t("musicListEditor.addToSheet")) {
+        accessibilityLabel = t("a11y.musicListEditor.addToSheet");
+    } else if (title === t("common.download")) {
+        accessibilityLabel = t("a11y.musicListEditor.download");
+    } else if (title === t("common.delete")) {
+        accessibilityLabel = t("a11y.musicListEditor.delete");
+    }
+    
     return (
         <Pressable
+            accessible
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="button"
             onPress={onPress}
             style={[style.bottomIconWrapper, { backgroundColor: colors.appBar }]}>
             <Icon
+                accessible={false}
                 name={icon}
                 color={colors.appBarText}
                 style={color === "textSecondary" ? style.opacity_06 : undefined}
@@ -120,6 +136,7 @@ function BottomIcon(props: IBottomIconProps) {
                 onPress={onPress}
             />
             <ThemeText
+                accessible={false}
                 fontSize="subTitle"
                 fontColor={"appBarText"}
                 opacity={color === "textSecondary" ? 0.6 : undefined}
