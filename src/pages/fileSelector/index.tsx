@@ -6,7 +6,7 @@ import Button from "@/components/base/textButton.tsx";
 import ThemeText from "@/components/base/themeText";
 import VerticalSafeAreaView from "@/components/base/verticalSafeAreaView";
 import globalStyle from "@/constants/globalStyle";
-import i18n from "@/core/i18n";
+import i18n, { useI18N } from "@/core/i18n";
 import { useParams } from "@/core/router";
 import useColors from "@/hooks/useColors";
 import useHardwareBack from "@/hooks/useHardwareBack";
@@ -59,6 +59,7 @@ export default function FileSelector() {
     const navigation = useNavigation();
     const colors = useColors();
     const [loading, setLoading] = useState(false);
+    const { t } = useI18N();
 
     useEffect(() => {
         (async () => {
@@ -209,6 +210,9 @@ export default function FileSelector() {
         return multi ? (
             <View style={style.selectAll}>
                 <Button
+                    accessible
+                    accessibilityLabel={t("a11y.fileSelector.selectAll")}
+                    accessibilityRole="button"
                     onPress={() => {
                         if (currentPageAllChecked) {
                             selectPath(filesData, false);
@@ -227,6 +231,9 @@ export default function FileSelector() {
             <StatusBar />
             <View style={[style.header, { backgroundColor: colors.appBar }]}>
                 <IconButton
+                    accessible
+                    accessibilityLabel={t("a11y.fileSelector.backButton")}
+                    accessibilityRole="button"
                     sizeType="small"
                     name="arrow-long-left"
                     color={colors.appBarText}
@@ -264,6 +271,9 @@ export default function FileSelector() {
                 </>
             )}
             <Pressable
+                accessible
+                accessibilityLabel={t("a11y.fileSelector.actionButton")}
+                accessibilityRole="button"
                 onPress={async () => {
                     if (checkedItems.length) {
                         const shouldBack = await onAction?.(checkedItems);
@@ -280,6 +290,7 @@ export default function FileSelector() {
                         },
                     ]}>
                     <ThemeText
+                        accessible={false}
                         fontColor={"appBarText"}
                         opacity={checkedItems.length > 0 ? undefined : 0.6}>
                         {actionText}

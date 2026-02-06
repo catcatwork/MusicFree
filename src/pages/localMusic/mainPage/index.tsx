@@ -20,6 +20,7 @@ export default function MainPage() {
                 actions={[
                     {
                         icon: "magnifying-glass",
+                        accessibilityLabel: t("common.search"),
                         onPress() {
                             navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: LocalMusicSheet.getMusicList(),
@@ -31,6 +32,7 @@ export default function MainPage() {
                     {
                         icon: "magnifying-glass",
                         title: t("localMusic.scanLocalMusic"),
+                        accessibilityLabel: t("a11y.localMusic.scanButton"),
                         async onPress() {
                             navigate(ROUTE_PATH.FILE_SELECTOR, {
                                 fileType: "folder",
@@ -65,6 +67,7 @@ export default function MainPage() {
                     {
                         icon: "pencil-square",
                         title: t("common.batchEdit"),
+                        accessibilityLabel: t("a11y.history.editButton"),
                         async onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: LocalMusicSheet.getMusicList(),
@@ -77,6 +80,7 @@ export default function MainPage() {
                     {
                         icon: "arrow-down-tray",
                         title: t("localMusic.downloadList"),
+                        accessibilityLabel: t("a11y.localMusic.downloadButton"),
                         async onPress() {
                             navigate(ROUTE_PATH.DOWNLOADING);
                         },
