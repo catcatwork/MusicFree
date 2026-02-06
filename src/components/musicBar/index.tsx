@@ -11,11 +11,13 @@ import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core
 import { musicIsPaused } from "@/utils/trackUtils";
 import MusicInfo from "./musicInfo";
 import Icon from "@/components/base/icon.tsx";
+import { useI18N } from "@/core/i18n";
 
 function CircularPlayBtn() {
     const progress = useProgress();
     const musicState = useMusicState();
     const colors = useColors();
+    const { t } = useI18N();
 
     const isPaused = musicIsPaused(musicState);
 
@@ -34,7 +36,11 @@ function CircularPlayBtn() {
             activeStrokeColor={colors.musicBarText}
             inActiveStrokeColor={colors.textSecondary}>
             <IconButton
-                accessibilityLabel={"播放或暂停歌曲"}
+                accessibilityLabel={t("a11y.musicDetail.playPause", {
+                    playing: isPaused
+                        ? t("a11y.musicDetail.paused")
+                        : t("a11y.musicDetail.playing"),
+                })}
                 name={isPaused ? "play" : "pause"}
                 sizeType={"normal"}
                 hitSlop={{
@@ -57,6 +63,7 @@ function CircularPlayBtn() {
 }
 function MusicBar() {
     const musicItem = useCurrentMusic();
+    const { t } = useI18N();
 
     const [showKeyboard, setKeyboardStatus] = useState(false);
 
@@ -89,17 +96,17 @@ function MusicBar() {
                         },
                     ]}
                     accessible
-                    accessibilityLabel={`歌曲: ${musicItem.title} 歌手: ${musicItem.artist}`}
+                    accessibilityLabel={`${t("common.singleMusic")}: ${musicItem.title}, ${t("common.artist")}: ${musicItem.artist}`}
                     // onPress={() => {
                     //     navigate(ROUTE_PATH.MUSIC_DETAIL);
                     // }}
                 >
-                    <MusicInfo musicItem={musicItem} />
+                    <MusicInfo accessible={false} musicItem={musicItem} />
                     <View style={style.actionGroup}>
                         <CircularPlayBtn />
                         <Icon
                             accessible
-                            accessibilityLabel="播放列表"
+                            accessibilityLabel={t("common.sheet")}
                             name="playlist"
                             size={rpx(56)}
                             onPress={() => {
