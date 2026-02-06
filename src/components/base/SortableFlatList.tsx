@@ -188,7 +188,7 @@ export default function SortableFlatList<T extends any = any>(
                     if (activeRef.current !== -1) {
                         offsetRef.current =
                             e.nativeEvent.pageY -
-                            (marginTop ?? layoutRef.current?.y ?? 0) -
+                            (marginTop ?? (layoutRef.current?.y ?? 0)) -
                             itemHeight / 2;
 
                         if (offsetRef.current < 0) {
