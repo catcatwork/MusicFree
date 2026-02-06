@@ -116,15 +116,16 @@ class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTou
         if (orientationEventListener == null) {
             orientationEventListener = object : OrientationEventListener(reactContext, SensorManager.SENSOR_DELAY_NORMAL) {
                 override fun onOrientationChanged(orientation: Int) {
-                    if (windowManager != null) {
+                    if (windowManager != null && tv != null && layoutParams != null) {
                         val outMetrics = DisplayMetrics()
                         windowManager?.defaultDisplay?.getMetrics(outMetrics)
                         windowWidth = outMetrics.widthPixels.toDouble()
                         windowHeight = outMetrics.heightPixels.toDouble()
                         layoutParams?.width = (widthPercent * windowWidth).toInt()
-                        layoutParams?.x = (leftPercent * (windowWidth - layoutParams!!.width)).toInt()
-                        layoutParams?.y = (topPercent * (windowHeight - tv!!.height)).toInt()
-                        windowManager?.updateViewLayout(tv, layoutParams)
+                        // 使用updatePosition方法来保持正确的相对位置
+                        tv?.post {
+                            updatePosition()
+                        }
                     }
                 }
             }
@@ -166,7 +167,14 @@ class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTou
 
     // 设置歌词内容
     fun setText(text: String) {
-        tv?.text = text
+        tv?.let {
+            it.text = text
+            // 文本改变后需要重新测量高度，然后更新位置以保持正确的topPercent
+            it.post {
+                // 使用post确保TextView已经完成测量
+                updatePosition()
+            }
+        }
     }
 
     fun setAlign(gravity: Int) {
@@ -174,21 +182,30 @@ class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTou
     }
 
     fun setTopPercent(pct: Double) {
-        var percent = pct.coerceIn(0.0, 1.0)
-        tv?.let {
-            layoutParams?.y = (percent * (windowHeight - it.height)).toInt()
-            windowManager?.updateViewLayout(it, layoutParams)
-        }
+        val percent = pct.coerceIn(0.0, 1.0)
         this.topPercent = percent
+        tv?.let {
+            it.post {
+                // 使用post确保TextView已经完成测量，获取准确的高度
+                layoutParams?.let { params ->
+                    val maxY = (windowHeight - it.height).coerceAtLeast(0.0)
+                    params.y = (percent * maxY).toInt()
+                    windowManager?.updateViewLayout(it, params)
+                }
+            }
+        }
     }
 
     fun setLeftPercent(pct: Double) {
-        var percent = pct.coerceIn(0.0, 1.0)
-        tv?.let {
-            layoutParams?.x = (percent * (windowWidth - layoutParams!!.width)).toInt()
-            windowManager?.updateViewLayout(it, layoutParams)
-        }
+        val percent = pct.coerceIn(0.0, 1.0)
         this.leftPercent = percent
+        tv?.let {
+            layoutParams?.let { params ->
+                val maxX = (windowWidth - params.width).coerceAtLeast(0.0)
+                params.x = (percent * maxX).toInt()
+                windowManager?.updateViewLayout(it, params)
+            }
+        }
     }
 
     fun setColors(textColor: String?, backgroundColor: String?) {
@@ -201,22 +218,53 @@ class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTou
     }
 
     fun setWidth(pct: Double) {
-        var percent = pct.coerceIn(0.3, 1.0)
-        tv?.let {
-            val width = (percent * windowWidth).toInt()
-            val originalWidth = layoutParams?.width ?: 0
-            layoutParams?.x = if (width <= originalWidth) {
-                layoutParams!!.x + (originalWidth - width) / 2
-            } else {
-                layoutParams!!.x - (width - originalWidth) / 2
-            }.coerceAtLeast(0).coerceAtMost((windowWidth - width).toInt())
-            layoutParams?.width = width
-            windowManager?.updateViewLayout(it, layoutParams)
-        }
+        val percent = pct.coerceIn(0.3, 1.0)
         this.widthPercent = percent
+        tv?.let {
+            layoutParams?.let { params ->
+                val newWidth = (percent * windowWidth).toInt()
+                val originalWidth = params.width
+                
+                // 调整X位置以保持居中效果（如果需要）
+                val widthDiff = newWidth - originalWidth
+                val newX = (params.x - widthDiff / 2)
+                    .coerceAtLeast(0)
+                    .coerceAtMost((windowWidth - newWidth).toInt())
+                
+                params.x = newX
+                params.width = newWidth
+                
+                // 根据新的X位置重新计算leftPercent
+                val maxX = (windowWidth - newWidth).coerceAtLeast(0.0)
+                this.leftPercent = if (maxX > 0) newX / maxX else 0.5
+                
+                windowManager?.updateViewLayout(it, params)
+            }
+        }
     }
 
     fun setFontSize(fontSize: Float) {
-        tv?.textSize = fontSize
+        tv?.let {
+            it.textSize = fontSize
+            // 字体大小改变后需要重新测量高度，然后更新位置以保持正确的topPercent
+            it.post {
+                updatePosition()
+            }
+        }
+    }
+
+    // 更新视图位置，保持正确的topPercent和leftPercent
+    private fun updatePosition() {
+        tv?.let {
+            layoutParams?.let { params ->
+                // 重新计算Y位置以保持topPercent，确保不会超出屏幕
+                val maxY = (windowHeight - it.height).coerceAtLeast(0.0)
+                params.y = (topPercent * maxY).toInt()
+                // 重新计算X位置以保持leftPercent，确保不会超出屏幕
+                val maxX = (windowWidth - params.width).coerceAtLeast(0.0)
+                params.x = (leftPercent * maxX).toInt()
+                windowManager?.updateViewLayout(it, params)
+            }
+        }
     }
 }
