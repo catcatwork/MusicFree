@@ -35,6 +35,7 @@ export default function ArtistDetail() {
                     {
                         title: t("artistDetail.menu.batchEditMusic"),
                         icon: "pencil-square",
+                        accessibilityLabel: t("a11y.history.editButton"),
                         onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: queryResult?.music?.data ?? [],
