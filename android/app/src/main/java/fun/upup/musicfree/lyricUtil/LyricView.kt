@@ -21,6 +21,11 @@ import com.facebook.react.bridge.ReactContext
 
 class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTouchListener {
 
+    companion object {
+        // 状态栏歌词最大高度占屏幕高度的比例，防止歌词过长占满屏幕
+        private const val MAX_HEIGHT_RATIO = 0.3
+    }
+
     private var windowManager: WindowManager? = null
     private var orientationEventListener: OrientationEventListener? = null
     private var layoutParams: WindowManager.LayoutParams? = null
@@ -98,7 +103,7 @@ class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTou
                     setPadding(12, 6, 12, 6)
                     gravity = align?.toString()?.toInt() ?: Gravity.CENTER
                     // 限制最大高度为屏幕高度的30%，防止歌词过长占满屏幕
-                    maxHeight = (windowHeight * 0.3).toInt()
+                    maxHeight = (windowHeight * MAX_HEIGHT_RATIO).toInt()
                 }
                 windowManager?.addView(tv, layoutParams)
 
@@ -125,7 +130,7 @@ class LyricView(private val reactContext: ReactContext) : Activity(), View.OnTou
                         windowHeight = outMetrics.heightPixels.toDouble()
                         layoutParams?.width = (widthPercent * windowWidth).toInt()
                         // 更新最大高度限制
-                        tv?.maxHeight = (windowHeight * 0.3).toInt()
+                        tv?.maxHeight = (windowHeight * MAX_HEIGHT_RATIO).toInt()
                         // 使用updatePosition方法来保持正确的相对位置
                         tv?.post {
                             updatePosition()
