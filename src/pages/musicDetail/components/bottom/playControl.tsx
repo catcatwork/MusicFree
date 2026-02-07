@@ -9,10 +9,12 @@ import TrackPlayer, { useMusicState, useRepeatMode } from "@/core/trackPlayer";
 import useOrientation from "@/hooks/useOrientation";
 import delay from "@/utils/delay";
 import { musicIsPaused } from "@/utils/trackUtils";
+import { useI18N } from "@/core/i18n";
 
 export default function () {
     const repeatMode = useRepeatMode();
     const musicState = useMusicState();
+    const { t } = useI18N();
 
     const orientation = useOrientation();
 
@@ -30,6 +32,11 @@ export default function () {
                         : null,
                 ]}>
                 <Icon
+                    accessible
+                    accessibilityLabel={t("a11y.musicDetail.repeatMode", {
+                        mode: t(repeatModeConst[repeatMode].i18nKey),
+                    })}
+                    accessibilityRole="button"
                     color={"white"}
                     name={repeatModeConst[repeatMode].icon}
                     size={rpx(56)}
@@ -41,6 +48,9 @@ export default function () {
                     }}
                 />
                 <Icon
+                    accessible
+                    accessibilityLabel={t("a11y.musicDetail.previous")}
+                    accessibilityRole="button"
                     color={"white"}
                     name={"skip-left"}
                     size={rpx(56)}
@@ -49,6 +59,13 @@ export default function () {
                     }}
                 />
                 <Icon
+                    accessible
+                    accessibilityLabel={t("a11y.musicDetail.playPause", {
+                        playing: musicIsPaused(musicState)
+                            ? t("a11y.musicDetail.paused")
+                            : t("a11y.musicDetail.playing"),
+                    })}
+                    accessibilityRole="button"
                     color={"white"}
                     name={musicIsPaused(musicState) ? "play" : "pause"}
                     size={rpx(96)}
@@ -61,6 +78,9 @@ export default function () {
                     }}
                 />
                 <Icon
+                    accessible
+                    accessibilityLabel={t("a11y.musicDetail.next")}
+                    accessibilityRole="button"
                     color={"white"}
                     name={"skip-right"}
                     size={rpx(56)}
@@ -69,6 +89,9 @@ export default function () {
                     }}
                 />
                 <Icon
+                    accessible
+                    accessibilityLabel={t("common.sheet")}
+                    accessibilityRole="button"
                     color={"white"}
                     name={"playlist"}
                     size={rpx(56)}

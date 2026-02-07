@@ -74,28 +74,56 @@ export default function Permissions() {
                 {t("permissionSetting.description")}
             </ThemeText>
             <ListItem
+                accessible
+                accessibilityLabel={t("a11y.permissions.floatWindow", {
+                    status: permissions.floatingWindow
+                        ? t("a11y.permissions.enabled")
+                        : t("a11y.permissions.disabled"),
+                })}
+                accessibilityRole="button"
+                accessibilityHint={t(
+                    "permissionSetting.floatWindowPermissionDescription",
+                )}
                 withHorizontalPadding
                 heightType="big"
                 onPress={() => {
                     LyricUtil.requestSystemAlertPermission();
                 }}>
                 <ListItem.Content
+                    accessible={false}
                     title={t("permissionSetting.floatWindowPermission")}
                     description={t("permissionSetting.floatWindowPermissionDescription")}
                 />
-                <ThemeSwitch value={permissions.floatingWindow} />
+                <ThemeSwitch
+                    accessible={false}
+                    value={permissions.floatingWindow}
+                />
             </ListItem>
             <ListItem
+                accessible
+                accessibilityLabel={t("a11y.permissions.fileStorage", {
+                    status: permissions.fileStorage
+                        ? t("a11y.permissions.enabled")
+                        : t("a11y.permissions.disabled"),
+                })}
+                accessibilityRole="button"
+                accessibilityHint={t(
+                    "permissionSetting.fileReadWritePermissionDescription",
+                )}
                 withHorizontalPadding
                 heightType="big"
                 onPress={() => {
                     NativeUtils.requestStoragePermission();
                 }}>
                 <ListItem.Content
+                    accessible={false}
                     title={t("permissionSetting.fileReadWritePermission")}
                     description={t("permissionSetting.fileReadWritePermissionDescription")}
                 />
-                <ThemeSwitch value={permissions.fileStorage} />
+                <ThemeSwitch
+                    accessible={false}
+                    value={permissions.fileStorage}
+                />
             </ListItem>
             {/* <ListItem withHorizontalPadding heightType="big">
                 <ListItem.Content

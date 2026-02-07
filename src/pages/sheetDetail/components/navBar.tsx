@@ -22,6 +22,7 @@ export default function () {
                     {
                         icon: "pencil-outline",
                         title: t("sheetDetail.editSheetInfo"),
+                        accessibilityLabel: t("a11y.sheetDetail.editButton"),
                         onPress() {
                             showPanel("EditMusicSheetInfo", {
                                 musicSheet: musicSheet,
@@ -31,6 +32,7 @@ export default function () {
                     {
                         icon: "pencil-square",
                         title: t("sheetDetail.batchEditMusic"),
+                        accessibilityLabel: t("a11y.history.editButton"),
                         onPress() {
                             navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: musicSheet.musicList,
@@ -41,6 +43,7 @@ export default function () {
                     {
                         icon: "sort-outline",
                         title: t("sheetDetail.sortMusic"),
+                        accessibilityLabel: t("sheetDetail.sortMusic"),
                         onPress() {
                             showDialog("RadioDialog", {
                                 content: [
@@ -82,6 +85,7 @@ export default function () {
                     {
                         icon: "trash-outline",
                         title: t("sheetDetail.deleteSheet"),
+                        accessibilityLabel: t("sheetDetail.deleteSheet"),
                         show: id !== "favorite",
                         onPress() {
                             showDialog("SimpleDialog", {
@@ -101,6 +105,7 @@ export default function () {
                 actions={[
                     {
                         icon: "magnifying-glass",
+                        accessibilityLabel: t("common.search"),
                         onPress() {
                             navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
                                 musicList: musicSheet?.musicList,

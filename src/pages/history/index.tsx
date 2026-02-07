@@ -24,6 +24,7 @@ export default function History() {
                     {
                         icon: "trash-outline",
                         title: t("history.clearHistory"),
+                        accessibilityLabel: t("a11y.history.clearButton"),
                         onPress() {
                             if (musicHistoryList.length) {
                                 musicHistory.clearMusic();
@@ -33,6 +34,7 @@ export default function History() {
                     {
                         icon: "pencil-square",
                         title: t("common.edit"),
+                        accessibilityLabel: t("a11y.history.editButton"),
                         onPress() {
                             navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
                                 musicList: musicHistoryList,

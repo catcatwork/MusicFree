@@ -7,6 +7,7 @@ import Checkbox from "@/components/base/checkbox";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "@/components/base/icon.tsx";
 import { iconSizeConst } from "@/constants/uiConst.ts";
+import { useI18N } from "@/core/i18n";
 
 const ITEM_HEIGHT = rpx(96);
 
@@ -29,17 +30,33 @@ function FileItem(props: IProps) {
     } = props;
 
     const textColor = useTextColor();
+    const { t } = useI18N();
+
+    const fileName = path.substring(
+        parentPath === "/" ? 1 : parentPath.length + 1,
+    );
 
     // 返回逻辑
 
     return (
         <View style={styles.container}>
             <Pressable
+                accessible
+                accessibilityLabel={
+                    type === "folder"
+                        ? t("a11y.fileSelector.folderItem", { name: fileName })
+                        : t("a11y.fileSelector.fileItem", {
+                              name: fileName,
+                              type: type,
+                          })
+                }
+                accessibilityRole={type === "folder" ? "button" : "none"}
                 onPress={() => {
                     onItemPress(checked);
                 }}
                 style={styles.pathWrapper}>
                 <Icon
+                    accessible={false}
                     name={
                         type === "folder"
                             ? "folder-outline"
@@ -50,20 +67,25 @@ function FileItem(props: IProps) {
                     size={iconSizeConst.light}
                 />
                 <ThemeText
+                    accessible={false}
                     style={styles.path}
                     numberOfLines={1}
                     ellipsizeMode="tail">
-                    {path.substring(
-                        parentPath === "/" ? 1 : parentPath.length + 1,
-                    )}
+                    {fileName}
                 </ThemeText>
             </Pressable>
             <TouchableOpacity
+                accessible
+                accessibilityLabel={t("a11y.fileSelector.checkbox", {
+                    checked: checked ? t("common.selectAll") : "",
+                })}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: !!checked }}
                 onPress={() => {
                     onCheckChange(!checked);
                 }}
                 style={styles.checkIcon}>
-                <Checkbox checked={checked} />
+                <Checkbox accessible={false} checked={checked} />
             </TouchableOpacity>
         </View>
     );
